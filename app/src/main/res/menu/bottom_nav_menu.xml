@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="new list"
+        android:id="@+id/newTaskFragment"
+        android:icon="@drawable/addlist"
+        android:iconTintMode="multiply"
+        android:checked="false"
+        />
+
+    <item
+        android:title="new note"
+        android:id="@+id/newNoteFragment"
+        android:icon="@drawable/addnote"
+        android:iconTintMode="multiply"
+        android:checked="false"/>
+</menu>
