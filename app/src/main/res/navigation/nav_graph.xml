@@ -6,6 +6,12 @@
     <action android:id="@+id/action_global_mainFragment"
         app:destination="@id/mainFragment"/>
 
+    <action android:id="@+id/action_global_noteViewFragment"
+        app:destination="@+id/noteViewFragment"/>
+
+    <action android:id="@+id/action_global_taskViewFragment"
+        app:destination="@+id/taskViewFragment"/>
+
     <fragment
         android:id="@+id/newNoteFragment"
         android:name="com.rick.notepad.ui.fragments.NewNoteFragment"
@@ -21,11 +27,19 @@
     <fragment
         android:id="@+id/noteListFragment"
         android:name="com.rick.notepad.ui.fragments.NoteListFragment"
-        android:label="NoteListFragment" />
+        android:label="NoteListFragment" >
+        <action
+            android:id="@+id/action_noteListFragment_to_newNoteFragment"
+            app:destination="@id/newNoteFragment" />
+    </fragment>
     <fragment
         android:id="@+id/taskListFragment"
         android:name="com.rick.notepad.ui.fragments.TaskListFragment"
-        android:label="TaskListFragment" />
+        android:label="TaskListFragment" >
+        <action
+            android:id="@+id/action_taskListFragment_to_newTaskFragment"
+            app:destination="@id/newTaskFragment" />
+    </fragment>
     <fragment
         android:id="@+id/newTaskFragment"
         android:name="com.rick.notepad.ui.fragments.NewTaskFragment"
@@ -33,5 +47,21 @@
         <action
             android:id="@+id/action_newTaskFragment_to_taskListFragment"
             app:destination="@id/taskListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/noteViewFragment"
+        android:name="com.rick.notepad.ui.fragments.NoteViewFragment"
+        android:label="NoteViewFragment" >
+        <argument
+            android:name="note"
+            app:argType="com.rick.notepad.model.Note" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskViewFragment"
+        android:name="com.rick.notepad.ui.fragments.TaskViewFragment"
+        android:label="TaskViewFragment" >
+        <argument
+            android:name="task"
+            app:argType="com.rick.notepad.model.Task" />
     </fragment>
 </navigation>

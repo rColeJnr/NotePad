@@ -3,7 +3,6 @@ package com.rick.notepad.util
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import java.lang.Exception
 
 
 open class OnSwipeTouchListener(): View.OnTouchListener {
@@ -27,14 +26,15 @@ open class OnSwipeTouchListener(): View.OnTouchListener {
             onTouch(e)
             return true
         }
+        
     
-        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
             val result = false
             try {
-                val diffy = e2.y - e1.y
-                val diffx = e2.x - e1.x
-                if (Math.abs(diffx) > Math.abs(diffy)) {
-                    if (Math.abs(diffx) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                val diffy = e2?.y?.minus(e1?.y!!)
+                val diffx = e2?.x?.minus(e1?.x!!)
+                if (Math.abs(diffx!!) > Math.abs(diffy!!)) {
+                    if (Math.abs(diffx) > SWIPE_THRESHOLD && velocityX.let { Math.abs(it) } > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffx > 0) {
                             onSwipeRight()
                         } else {

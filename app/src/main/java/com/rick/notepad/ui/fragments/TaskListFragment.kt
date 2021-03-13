@@ -1,11 +1,12 @@
 package com.rick.notepad.ui.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +18,8 @@ import com.rick.notepad.model.Task
 import com.rick.notepad.ui.MainActivity
 import com.rick.notepad.util.Listener
 import com.rick.notepad.util.SimpleDividerItemDecoration
-import com.rick.notepad.viewmodel.NoteViewModel
+import com.rick.notepad.util.popupmenu.MyPopUpMenu
+import com.rick.notepad.util.popupmenu.OpenOnClick
 import com.rick.notepad.viewmodel.TaskViewModel
 
 class TaskListFragment: Fragment() {
@@ -25,7 +27,6 @@ class TaskListFragment: Fragment() {
     private var _binding: FragmentTaskListBinding? = null
     private val binding get() = _binding!!
     private lateinit var taskItemBinding: TaskItemBinding
-    
     private lateinit var taskViewModel: TaskViewModel
     private val taskAdapter = TaskAdapter()
     
@@ -34,20 +35,25 @@ class TaskListFragment: Fragment() {
         return binding.root
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     
-        binding.rvFragmentTaskList.apply {
-            setOnTouchListener(Listener(this))
+        binding.apply {
+            rvFragmentTaskList.setOnTouchListener(Listener(rvFragmentTaskList))
+            
+            taskListBackButton.setOnClickListener { findNavController().navigate(R.id.action_global_mainFragment) }
+            
+            fabFragmentTaskList.setOnClickListener { findNavController().navigate(R.id.action_taskListFragment_to_newTaskFragment) }
         }
-    
+
         taskViewModel = (activity as MainActivity).taskViewModel
-    
+
         taskViewModel.taskList.observe(
             viewLifecycleOwner,
             {taskAdapter.differ.submitList(it)}
         )
-        
+
         setuprv()
     }
     
@@ -89,14 +95,25 @@ class TaskListFragment: Fragment() {
                     this.cbTaskCompleted.isChecked = task.task_completed
                     this.tvTaskTime.text = task.task_time
                 }
+                
+                itemView.apply {
+                    setOnClickListener {
+                        OpenOnClick(this@TaskListFragment, task).onClickOpen()
+                    }
+                    
+                    setOnLongClickListener {
+                        MyPopUpMenu(context, task, it, taskViewModel, this@TaskListFragment)
+                        true
+                    }
+                }
             }
         }
     
         override fun getItemCount() = differ.currentList.size
     }
-    
-    
+   
     override fun onDestroy() {
+        findNavController().popBackStack(R.id.mainFragment, false)
         _binding = null
         super.onDestroy()
     }

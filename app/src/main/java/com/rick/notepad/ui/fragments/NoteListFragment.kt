@@ -1,20 +1,23 @@
 package com.rick.notepad.ui.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rick.notepad.R
 import com.rick.notepad.databinding.FragmentNoteListBinding
 import com.rick.notepad.databinding.NoteItemBinding
 import com.rick.notepad.model.Note
 import com.rick.notepad.ui.MainActivity
 import com.rick.notepad.util.Listener
 import com.rick.notepad.util.SimpleDividerItemDecoration
+import com.rick.notepad.util.popupmenu.MyPopUpMenu
+import com.rick.notepad.util.popupmenu.OpenOnClick
 import com.rick.notepad.viewmodel.NoteViewModel
 
 class NoteListFragment: Fragment() {
@@ -23,7 +26,6 @@ class NoteListFragment: Fragment() {
     // this property is only valid between onCreate and onDestroy
     private val binding get() = _binding!!
     private lateinit var noteItemBinding: NoteItemBinding
-    
     private lateinit var noteViewModel: NoteViewModel
     private val noteAdapter = NotesAdapter()
     
@@ -32,18 +34,24 @@ class NoteListFragment: Fragment() {
         return binding.root
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     
-        binding.rvNoteList.apply {
-            setOnTouchListener(Listener(this))
+        binding.apply {
+            rvNoteList.setOnTouchListener(Listener(rvNoteList))
+            
+            noteListBackButton.setOnClickListener { findNavController().navigate(R.id.action_global_mainFragment) }
+            
+            fabFragmentTaskList.setOnClickListener { findNavController().navigate(R.id.action_noteListFragment_to_newNoteFragment) }
         }
         
         noteViewModel = (activity as MainActivity).noteViewModel
         
-        noteViewModel.notesList.observe(viewLifecycleOwner, {
-            noteAdapter.differ.submitList(it)
-        })
+        noteViewModel.notesList.observe(
+            viewLifecycleOwner,
+            {noteAdapter.differ.submitList(it)}
+        )
     
         setupRv()
     }
@@ -53,9 +61,11 @@ class NoteListFragment: Fragment() {
             adapter = noteAdapter
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(SimpleDividerItemDecoration(context))
+            registerForContextMenu(this)
         }
     }
     
+
     inner class NotesAdapter: RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
         
         inner class NotesViewHolder(binding: NoteItemBinding) :
@@ -76,9 +86,6 @@ class NoteListFragment: Fragment() {
             return NotesViewHolder(noteItemBinding)
         }
         
-        private var onItemClickListener: ((Note) -> Unit)? = null
-        private var onMyItemLongClickListener: ((Note) -> Unit)? = null
-        
         override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
             
             val note = differ.currentList[position]
@@ -90,10 +97,10 @@ class NoteListFragment: Fragment() {
                 
                 this.itemView.apply {
                     setOnClickListener {
-                        onItemClickListener?.let {it(note)}
+                        OpenOnClick(this@NoteListFragment, note).onClickOpen()
                     }
                     setOnLongClickListener {
-                        onMyItemLongClickListener?.let { it(note) }
+                        MyPopUpMenu(context, note, it, noteViewModel, this@NoteListFragment).myPopUpMenu()
                         true
                     }
                 }
@@ -102,12 +109,26 @@ class NoteListFragment: Fragment() {
         
         override fun getItemCount() = differ.currentList.size
         
-        fun setOnItemClickListener(listener: (Note) -> Unit) {
-            onItemClickListener = listener
-        }
-        
-        fun setOnItemLongClickListener(listener: (Note) -> Unit){
-            onMyItemLongClickListener = listener
-        }
+    }
+    
+    override fun onPause() {
+        findNavController().popBackStack(R.id.mainFragment, false)
+        super.onPause()
+    }
+    
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }
+
+//private fun handleKeyEvent(view: View, keyCode: Int): Boolean {
+//    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+//        // Hide the keyboard
+//        val inputMethodManager =
+//            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+//        return true
+//    }
+//    return false
+//}

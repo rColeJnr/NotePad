@@ -1,17 +1,15 @@
 package com.rick.notepad.ui
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.rick.notepad.R
 import com.rick.notepad.databinding.ActivityMainBinding
-import com.rick.notepad.util.OnSwipeTouchListener
 import com.rick.notepad.viewmodel.NoteViewModel
 import com.rick.notepad.viewmodel.TaskViewModel
 
@@ -44,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    
 }
 
 /*

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:title="new list"
+        android:title="new task"
         android:id="@+id/newTaskFragment"
         android:icon="@drawable/addlist"
         android:iconTintMode="multiply"
