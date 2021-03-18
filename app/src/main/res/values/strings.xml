@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NotePad</string>
+    <string name="bluecolour">bluecolour</string>
+    <string name="purplecolour">purplecolour</string>
+    <string name="yellowcolour">yellowcolour</string>
+    <string name="redcolour">redcolour</string>
+    <string name="greencolour">greencolour</string>
 </resources>

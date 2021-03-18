@@ -18,7 +18,6 @@ class OpenOnClick(fragment: Fragment, private val myIt: Any) {
             navController.navigate(
                 R.id.action_global_noteViewFragment, bundle
             )
-//            navController.popBackStack()
         }
         else if (myIt is Task) {
             bundle.putSerializable("task", myIt)

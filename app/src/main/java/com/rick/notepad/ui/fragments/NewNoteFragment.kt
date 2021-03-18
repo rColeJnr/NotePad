@@ -33,7 +33,7 @@ class NewNoteFragment: Fragment() {
     }
     
     private fun addToNote(){
-        if (binding.tvNewNoteName.text.isNotEmpty()){
+        if (binding.tvNewNoteName.text!!.isNotEmpty()){
             note.text = binding.tvNewNoteName.text.toString()
             note.title = note.text.split("\n")[0]
             

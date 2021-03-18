@@ -19,7 +19,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvTaskName"
         android:textSize="18sp"
-        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@id/cbTaskCompleted"/>
 
@@ -28,7 +27,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvTaskDescription"
         android:textSize="13sp"
-        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/tvTaskName"
         app:layout_constraintLeft_toRightOf="@id/cbTaskCompleted"/>
 
@@ -38,7 +36,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvTaskTime"
         android:textSize="15sp"
-        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/tvTaskDescription"
         app:layout_constraintLeft_toRightOf="@id/cbTaskCompleted"/>
 

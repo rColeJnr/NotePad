@@ -12,6 +12,7 @@ data class Note(
     var id: Int? = null,
     var title: String = "",
     var text: String = "",
-    var time: String = "00:00:00"
+    var time: String = "00:00:00",
+    var noteColour: Int? = null
 
 ) : Serializable

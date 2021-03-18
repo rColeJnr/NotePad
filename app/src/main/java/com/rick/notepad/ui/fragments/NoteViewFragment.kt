@@ -37,7 +37,7 @@ class NoteViewFragment: Fragment() {
         noteViewModel = (activity as MainActivity).noteViewModel
         note = args.note
         binding.apply {
-            tvNewNoteName.setText(note.text)
+            tvNewNoteName.setText(note.title)
             tvNewNoteTime.text = note.time
         }
         

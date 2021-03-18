@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.button.MaterialButton
-        style="@style/ButtonsTheme.NotePad.Night"
+        style="@style/ButtonsTheme.NotePad"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:id="@+id/mainButtonToTask"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.button.MaterialButton
-        style="@style/ButtonsTheme.NotePad.Night"
+        style="@style/ButtonsTheme.NotePad"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:id="@+id/mainButtonToNote"

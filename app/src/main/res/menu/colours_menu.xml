@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group >
+        <item
+            android:id="@+id/blueColour"
+            android:icon="@drawable/bluecircle"
+            android:iconTintMode="multiply"
+            android:title="blue"
+            app:showAsAction="always" />
+
+        <item
+            android:title="red"
+            android:id="@+id/redColour"
+            android:icon="@drawable/redcircle"
+            app:showAsAction="always" />
+        <item android:title="purple"
+            android:id="@+id/purpleColour"
+            android:icon="@drawable/purplecircle"
+            app:showAsAction="always" />
+
+        <item android:title="green"
+            android:id="@+id/greenColour"
+            android:icon="@drawable/greencircle"
+            app:showAsAction="always" />
+
+        <item android:title="yellow"
+            android:id="@+id/yellowColour"
+            android:icon="@drawable/yellowcircle"
+            app:showAsAction="always" />
+    </group>
+</menu>

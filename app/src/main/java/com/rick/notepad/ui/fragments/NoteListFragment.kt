@@ -3,6 +3,7 @@ package com.rick.notepad.ui.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -19,6 +20,7 @@ import com.rick.notepad.util.SimpleDividerItemDecoration
 import com.rick.notepad.util.popupmenu.MyPopUpMenu
 import com.rick.notepad.util.popupmenu.OpenOnClick
 import com.rick.notepad.viewmodel.NoteViewModel
+import kotlinx.android.synthetic.main.note_item.view.*
 
 class NoteListFragment: Fragment() {
     
@@ -37,7 +39,7 @@ class NoteListFragment: Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-    
+
         binding.apply {
             rvNoteList.setOnTouchListener(Listener(rvNoteList))
             
@@ -82,7 +84,7 @@ class NoteListFragment: Fragment() {
         val differ = AsyncListDiffer(this, listDifferCallback)
         
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
-            noteItemBinding = NoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            noteItemBinding = NoteItemBinding.inflate(LayoutInflater.from(parent.context))
             return NotesViewHolder(noteItemBinding)
         }
         
@@ -93,15 +95,59 @@ class NoteListFragment: Fragment() {
                 with(note){
                     noteItemBinding.tvNoteName.text = this.title
                     noteItemBinding.tvNoteTime.text = this.time
+                    when(note.noteColour){
+                        R.string.bluecolour -> noteItemBinding.ibNoteColour.setImageResource(R.drawable.bluecircle)
+                        R.string.purplecolour -> noteItemBinding.ibNoteColour.setImageResource(R.drawable.purplecircle)
+                        R.string.greencolour -> noteItemBinding.ibNoteColour.setImageResource(R.drawable.greencircle)
+                        R.string.yellowcolour -> noteItemBinding.ibNoteColour.setImageResource(R.drawable.yellowcircle)
+                        R.string.redcolour -> noteItemBinding.ibNoteColour.setImageResource(R.drawable.redcircle)
+                    }
                 }
                 
                 this.itemView.apply {
-                    setOnClickListener {
+                    tvNoteName.setOnClickListener {
                         OpenOnClick(this@NoteListFragment, note).onClickOpen()
                     }
-                    setOnLongClickListener {
+                    tvNoteName.setOnLongClickListener {
                         MyPopUpMenu(context, note, it, noteViewModel, this@NoteListFragment).myPopUpMenu()
                         true
+                    }
+
+                    ibNoteColour.setOnClickListener {
+                        PopupMenu(context, it).apply {
+                            inflate(R.menu.colours_menu)
+                            setOnMenuItemClickListener {
+                                when(it.itemId){
+                                    R.id.blueColour -> {
+                                        ibNoteColour.setImageResource(R.drawable.bluecircle)
+                                        note.noteColour = R.string.bluecolour
+                                        noteViewModel.addNote(note)
+                                    }
+                                    R.id.purpleColour -> {
+                                        ibNoteColour.setImageResource(R.drawable.purplecircle)
+                                        note.noteColour = R.string.purplecolour
+                                        noteViewModel.addNote(note)
+                                    }
+                                    R.id.yellowColour -> {
+                                        ibNoteColour.setImageResource(R.drawable.yellowcircle)
+                                        note.noteColour = R.string.yellowcolour
+                                        noteViewModel.addNote(note)
+                                    }
+                                    R.id.redColour -> {
+                                        ibNoteColour.setImageResource(R.drawable.redcircle)
+                                        note.noteColour = R.string.redcolour
+                                        noteViewModel.addNote(note)
+                                    }
+                                    R.id.greenColour -> {
+                                        ibNoteColour.setImageResource(R.drawable.greencircle)
+                                        note.noteColour = R.string.greencolour
+                                        noteViewModel.addNote(note)
+                                    }
+                                }
+                                true
+                            }
+                            show()
+                        }
                     }
                 }
             }
@@ -111,13 +157,9 @@ class NoteListFragment: Fragment() {
         
     }
     
-    override fun onPause() {
-        findNavController().popBackStack(R.id.mainFragment, false)
-        super.onPause()
-    }
-    
     override fun onDestroy() {
         _binding = null
+        findNavController().popBackStack(R.id.mainFragment, false)
         super.onDestroy()
     }
 }

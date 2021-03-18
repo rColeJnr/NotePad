@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item
+            android:title="Does not repeat"
+            android:id="@+id/doesNotRepeat"/>
+
+        <item
+            android:title="Every day"
+            android:id="@+id/everyDay"/>
+
+        <item
+            android:title="Every Week on"
+            android:id="@+id/everyWeek"/>
+
+        <item
+            android:title="Every month on"
+            android:id="@+id/everyMonth"/>
+
+        <item
+            android:title="Every year on "
+            android:id="@+id/everyYear"/>
+
+        <item
+            android:title="Every weekday"
+            android:id="@+id/everyWeekday"/>
+
+    </group>
+
+</menu>

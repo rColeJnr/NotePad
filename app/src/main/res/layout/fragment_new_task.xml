@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_dark_background"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
@@ -19,7 +18,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/etNewTaskName"
         android:hint="task name"
-        android:textColor="@color/white"
+        android:keyboardNavigationCluster="true"
         android:layout_marginTop="195dp"
         android:layout_marginStart="20dp"
         app:layout_constraintStart_toEndOf="@id/etCircle"
@@ -35,12 +34,12 @@
         app:layout_constraintTop_toTopOf="@id/etNewTaskDescription"
         app:layout_constraintBottom_toBottomOf="@id/etNewTaskDescription"/>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etNewTaskDescription"
         android:hint="task description"
-        android:textColor="@color/white"
+        android:keyboardNavigationCluster="true"
         android:layout_marginTop="45dp"
         android:layout_marginStart="20dp"
         app:layout_constraintTop_toBottomOf="@id/etNewTaskName"/>
@@ -48,46 +47,60 @@
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ibNewTaskTime"
+        android:id="@+id/ibNewTaskDate"
         app:icon="@drawable/ic_set_time"
         app:iconTint="@android:color/holo_blue_dark"
-        android:text="12th May of 2000"
-        android:textColor="@color/white"
-        android:background="@android:color/transparent"
+        android:hint="set date"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:backgroundTint="@android:color/transparent"
         android:layout_marginTop="95dp"
-        android:layout_marginStart="45dp"
+        app:layout_constraintEnd_toStartOf="@id/ibNewTaskTime"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/etNewTaskDescription"/>
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/reminderSwitch"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@id/ibNewTaskTime"
-        app:layout_constraintTop_toTopOf="@id/ibNewTaskTime"
-        app:layout_constraintBottom_toBottomOf="@id/ibNewTaskTime"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ibTaskRepeats"
-        android:text="repeats"
-        android:textColor="@color/white"
+        android:id="@+id/ibNewTaskTime"
+        app:icon="@drawable/ic_set_time"
+        app:iconTint="@android:color/holo_blue_dark"
+        android:backgroundTint="@android:color/transparent"
+        android:hint="set time"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ibNewTaskDate"
+        app:layout_constraintTop_toTopOf="@id/ibNewTaskDate"
+        app:layout_constraintBottom_toBottomOf="@id/ibNewTaskDate"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/repeatsSwitch"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@id/repeatsButton"
+        app:layout_constraintTop_toTopOf="@id/repeatsButton"
+        app:layout_constraintBottom_toBottomOf="@id/repeatsButton"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/repeatsButton"
         app:icon="@drawable/ic_set_repeats"
         app:iconTint="@android:color/holo_blue_dark"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="45dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ibNewTaskTime"/>
+        android:backgroundTint="@android:color/transparent"
+        android:text="repeats"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/ibNewTaskDate"
+        app:layout_constraintStart_toStartOf="@id/ibNewTaskDate"
+        app:layout_constraintEnd_toStartOf="@id/ibNewTaskTime"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvTaskCreatedTime"
-        android:text="12th May of 2000"
-        android:textColor="@color/white"
+        android:hint="12th May of 2000"
         android:layout_marginBottom="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

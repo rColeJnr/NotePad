@@ -2,6 +2,7 @@ package com.rick.notepad.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import com.rick.notepad.util.SimpleDividerItemDecoration
 import com.rick.notepad.util.popupmenu.MyPopUpMenu
 import com.rick.notepad.util.popupmenu.OpenOnClick
 import com.rick.notepad.viewmodel.TaskViewModel
+import kotlinx.android.synthetic.main.task_item.view.*
 
 class TaskListFragment: Fragment() {
     
@@ -28,6 +30,7 @@ class TaskListFragment: Fragment() {
     private val binding get() = _binding!!
     private lateinit var taskItemBinding: TaskItemBinding
     private lateinit var taskViewModel: TaskViewModel
+    private lateinit var task: Task
     private val taskAdapter = TaskAdapter()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,7 +56,7 @@ class TaskListFragment: Fragment() {
             viewLifecycleOwner,
             {taskAdapter.differ.submitList(it)}
         )
-
+        
         setuprv()
     }
     
@@ -87,31 +90,39 @@ class TaskListFragment: Fragment() {
         }
     
         override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-            val task = differ.currentList.get(position)
+            task = differ.currentList.get(position)
             with(holder){
                 with(taskItemBinding){
                     this.tvTaskName.text = task.task_name
-                    this.tvTaskDescription.text = task.task_description
+                    this.tvTaskDescription.text = task.task_description.split("\n")[0]
                     this.cbTaskCompleted.isChecked = task.task_completed
                     this.tvTaskTime.text = task.task_time
                 }
                 
                 itemView.apply {
-                    setOnClickListener {
+                    taskItemBinding.tvTaskName.setOnClickListener {
                         OpenOnClick(this@TaskListFragment, task).onClickOpen()
                     }
-                    
-                    setOnLongClickListener {
+    
+                    taskItemBinding.tvTaskName.setOnLongClickListener {
                         MyPopUpMenu(context, task, it, taskViewModel, this@TaskListFragment)
                         true
                     }
+                    
+                    cbTaskCompleted.setOnClickListener {
+                        task = differ.currentList.get(position) as Task
+                        task.task_completed = cbTaskCompleted.isChecked
+                        taskViewModel.addTask(task)
+                        Log.e("task", "${task.task_completed}")
+                    }
                 }
+                
             }
         }
     
         override fun getItemCount() = differ.currentList.size
     }
-   
+    
     override fun onDestroy() {
         findNavController().popBackStack(R.id.mainFragment, false)
         _binding = null

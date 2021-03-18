@@ -13,6 +13,7 @@ data class Task (
     var task_name: String = "",
     var task_description: String = "",
     var task_time: String = "",
-    var task_completed: Boolean = false
+    var task_completed: Boolean = false,
+    var task_colour: String = ""
 
 ) : Serializable

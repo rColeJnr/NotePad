@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rick.notepad.R
 import com.rick.notepad.databinding.FragmentMainBinding
 import com.rick.notepad.databinding.NoteItemBinding
 import com.rick.notepad.databinding.TaskItemBinding
@@ -18,10 +20,10 @@ import com.rick.notepad.model.Task
 import com.rick.notepad.ui.MainActivity
 import com.rick.notepad.util.Listener
 import com.rick.notepad.util.SimpleDividerItemDecoration
-import com.rick.notepad.util.popupmenu.MyPopUpMenu
 import com.rick.notepad.util.popupmenu.OpenOnClick
 import com.rick.notepad.viewmodel.NoteViewModel
 import com.rick.notepad.viewmodel.TaskViewModel
+import kotlinx.android.synthetic.main.note_item.view.*
 
 class MainFragment: Fragment() {
 
@@ -48,12 +50,20 @@ class MainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     
-        binding.rvMainFragment.apply {
-            setOnTouchListener(Listener(this))
+        binding.apply {
+            rvMainFragment.setOnTouchListener(Listener(rvMainFragment))
+            mainButtonToNote.setOnClickListener {
+                findNavController().navigate(R.id.action_mainFragment_to_noteListFragment)
+            }
+            mainButtonToTask.setOnClickListener {
+                findNavController().navigate(R.id.action_mainFragment_to_taskListFragment)
+            }
         }
         
         noteViewModel = (activity as MainActivity).noteViewModel
         taskViewModel = (activity as MainActivity).taskViewModel
+        
+//        val notelist = noteViewModel.notesList
         
         noteViewModel.notesList.observe(
             viewLifecycleOwner,
@@ -118,14 +128,10 @@ class MainFragment: Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             
             return if (viewType == 0){
-                taskItemView = TaskItemBinding.inflate(LayoutInflater.from(parent.context),
-                    parent,
-                    false)
+                taskItemView = TaskItemBinding.inflate(LayoutInflater.from(parent.context))
                 TaskViewHolder(taskItemView)
             } else {
-                noteItemView = NoteItemBinding.inflate(LayoutInflater.from(parent.context),
-                    parent,
-                    false)
+                noteItemView = NoteItemBinding.inflate(LayoutInflater.from(parent.context))
                 NoteViewHolder(noteItemView)
             }
         }
@@ -134,34 +140,73 @@ class MainFragment: Fragment() {
             with (holder){
                 
                 if (this is TaskViewHolder) {
-//                    val task = mainList.get(position) as Task
-                    val task = differ.currentList[position] as Task
+                    var task = differ.currentList[position] as Task
                     TaskViewHolder(taskItemView).bindTask(task)
                     
                     itemView.apply {
-                        setOnClickListener {
+                        taskItemView.tvTaskName.setOnClickListener {
                             OpenOnClick(this@MainFragment, task).onClickOpen()
                         }
-                        setOnLongClickListener {
-                            MyPopUpMenu(context, task, it, taskViewModel, this@MainFragment).myPopUpMenu()
+                        taskItemView.tvTaskName.setOnLongClickListener {
                             true
+                        }
+                        taskItemView.cbTaskCompleted.setOnClickListener{
+                            task = differ.currentList.get(position) as Task
+                            task.task_completed = taskItemView.cbTaskCompleted.isChecked
+                            taskViewModel.addTask(task)
+                            mainList.removeLast()
                         }
                     }
                     
                 }
                 if (this is NoteViewHolder) {
-//                    val note = mainList.get(position) as Note
                     val note = differ.currentList[position] as Note
                     NoteViewHolder(noteItemView).bindNote(note)
     
                     itemView.apply {
-                        setOnClickListener {
+                        noteItemView.tvNoteName.setOnClickListener {
                             OpenOnClick(this@MainFragment, note).onClickOpen()
                         }
                         
-                        setOnLongClickListener {
-                            MyPopUpMenu(context, note, it, this@MainFragment.noteViewModel, this@MainFragment).myPopUpMenu()
-                            true
+                        noteItemView.tvNoteName.setOnLongClickListener {
+                           true
+                        }
+                        
+                        ibNoteColour.setOnClickListener {
+                            PopupMenu(context, it).apply {
+                                inflate(R.menu.colours_menu)
+                                setOnMenuItemClickListener {
+                                    when(it.itemId){
+                                        R.id.blueColour -> {
+                                            ibNoteColour.setImageResource(R.drawable.bluecircle)
+                                            note.noteColour = R.string.bluecolour
+                                            noteViewModel.addNote(note)
+                                        }
+                                        R.id.purpleColour -> {
+                                            ibNoteColour.setImageResource(R.drawable.purplecircle)
+                                            note.noteColour = R.string.purplecolour
+                                            noteViewModel.addNote(note)
+                                        }
+                                        R.id.yellowColour -> {
+                                            ibNoteColour.setImageResource(R.drawable.yellowcircle)
+                                            note.noteColour = R.string.yellowcolour
+                                            noteViewModel.addNote(note)
+                                        }
+                                        R.id.redColour -> {
+                                            ibNoteColour.setImageResource(R.drawable.redcircle)
+                                            note.noteColour = R.string.redcolour
+                                            noteViewModel.addNote(note)
+                                        }
+                                        R.id.greenColour -> {
+                                            ibNoteColour.setImageResource(R.drawable.greencircle)
+                                            note.noteColour = R.string.greencolour
+                                            noteViewModel.addNote(note)
+                                        }
+                                    }
+                                    true
+                                }
+                                show()
+                            }
                         }
                     }
                 }
@@ -189,6 +234,13 @@ class MainFragment: Fragment() {
                     noteItemView.apply {
                         tvNoteName.text = note.title
                         tvNoteTime.text = note.time
+                        when(note.noteColour){
+                            R.string.bluecolour -> ibNoteColour.setImageResource(R.drawable.bluecircle)
+                            R.string.purplecolour -> ibNoteColour.setImageResource(R.drawable.purplecircle)
+                            R.string.greencolour -> ibNoteColour.setImageResource(R.drawable.greencircle)
+                            R.string.yellowcolour -> ibNoteColour.setImageResource(R.drawable.yellowcircle)
+                            R.string.redcolour -> ibNoteColour.setImageResource(R.drawable.redcircle)
+                        }
                     }
                 }
             }
