@@ -11,15 +11,15 @@
             android:id="@+id/everyDay"/>
 
         <item
-            android:title="Every Week on"
+            android:title="Every Week"
             android:id="@+id/everyWeek"/>
 
         <item
-            android:title="Every month on"
+            android:title="Every month"
             android:id="@+id/everyMonth"/>
 
         <item
-            android:title="Every year on "
+            android:title="Every year"
             android:id="@+id/everyYear"/>
 
         <item

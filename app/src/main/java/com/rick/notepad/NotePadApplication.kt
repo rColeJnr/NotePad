@@ -12,5 +12,4 @@ class NotePadApplication: Application() {
         NoteRepository.initialize(this)
         TaskRepository.initialize(this)
     }
-    
 }

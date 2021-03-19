@@ -16,7 +16,6 @@ import com.rick.notepad.viewmodel.TaskViewModel
 class MainActivity : AppCompatActivity() {
     
     private lateinit var navController: NavController
-    private var destinationId: Int = 1
     
     lateinit var noteViewModel: NoteViewModel
     lateinit var taskViewModel: TaskViewModel

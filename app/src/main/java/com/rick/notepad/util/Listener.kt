@@ -10,9 +10,9 @@ import com.rick.notepad.R
 
 class Listener(view: View) : OnSwipeTouchListener() {
     
-    val navController  = findNavController(view)
+    private val navController  = findNavController(view)
     
-    var destinationId: Int = 1
+    private var destinationId: Int = 1
     
     override fun onSwipeLeft() {
         

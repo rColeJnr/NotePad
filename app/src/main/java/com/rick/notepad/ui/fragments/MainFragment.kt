@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -24,6 +25,9 @@ import com.rick.notepad.util.popupmenu.OpenOnClick
 import com.rick.notepad.viewmodel.NoteViewModel
 import com.rick.notepad.viewmodel.TaskViewModel
 import kotlinx.android.synthetic.main.note_item.view.*
+import kotlinx.android.synthetic.main.task_item.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainFragment: Fragment() {
 
@@ -63,7 +67,6 @@ class MainFragment: Fragment() {
         noteViewModel = (activity as MainActivity).noteViewModel
         taskViewModel = (activity as MainActivity).taskViewModel
         
-//        val notelist = noteViewModel.notesList
         
         noteViewModel.notesList.observe(
             viewLifecycleOwner,
@@ -72,7 +75,7 @@ class MainFragment: Fragment() {
                 myadapter.differ.submitList(mainList.toSet().toList())
             }
         )
-        
+
         taskViewModel.taskList.observe(
             viewLifecycleOwner,
             {
@@ -83,12 +86,43 @@ class MainFragment: Fragment() {
         
         
         setuprv()
-    }
 
+        binding.etSearch.setOnQueryTextListener( object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+
+                val tempArr = mainList
+                val tempArr2 = ArrayList<Any>()
+
+                for (arr in tempArr){
+                    if(arr is Note){
+                        if(arr.title.toLowerCase(Locale.getDefault()).
+                            contains(newText.toString())){
+                                tempArr2.add(arr)
+                        }
+                    } else if (arr is Task){
+                        if (arr.task_name.toLowerCase(Locale.getDefault()).
+                            contains(newText.toString())){
+                                tempArr2.add(arr)
+                        }
+                    }
+                }
+
+                myadapter.differ.submitList(tempArr2)
+                return true
+            }
+        })
+
+    }
+   
     private fun setuprv(){
         binding.rvMainFragment.apply {
             adapter = myadapter
             layoutManager = LinearLayoutManager(context)
+            //adds separator line between itemviews
             addItemDecoration(SimpleDividerItemDecoration(context))
             registerForContextMenu(this)
         }
@@ -104,30 +138,27 @@ class MainFragment: Fragment() {
 
     inner class MainFragmentAdapter:
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        
-        private val diffUtil = object : DiffUtil.ItemCallback<Any>(){
+
+        private val diffUtil = object : DiffUtil.ItemCallback<Any>() {
             override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
                 return false
             }
-    
+
             override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
                 return false
             }
         }
-        
+
         val differ = AsyncListDiffer(this, diffUtil)
-        
+
         override fun getItemViewType(position: Int): Int {
-//            return if (mainList.get(position) is Task) 0
-    
-            Log.i("differSize", "${differ.currentList.size}")
             return if (differ.currentList[position] is Task) 0
             else 1
         }
-    
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            
-            return if (viewType == 0){
+
+            return if (viewType == 0) {
                 taskItemView = TaskItemBinding.inflate(LayoutInflater.from(parent.context))
                 TaskViewHolder(taskItemView)
             } else {
@@ -135,14 +166,14 @@ class MainFragment: Fragment() {
                 NoteViewHolder(noteItemView)
             }
         }
-    
+
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            with (holder){
-                
+            with(holder) {
+
                 if (this is TaskViewHolder) {
                     var task = differ.currentList[position] as Task
                     TaskViewHolder(taskItemView).bindTask(task)
-                    
+
                     itemView.apply {
                         taskItemView.tvTaskName.setOnClickListener {
                             OpenOnClick(this@MainFragment, task).onClickOpen()
@@ -150,57 +181,61 @@ class MainFragment: Fragment() {
                         taskItemView.tvTaskName.setOnLongClickListener {
                             true
                         }
-                        taskItemView.cbTaskCompleted.setOnClickListener{
-                            task = differ.currentList.get(position) as Task
-                            task.task_completed = taskItemView.cbTaskCompleted.isChecked
+                        taskItemView.cbTaskCompleted.setOnClickListener {
+                            task.task_completed = cbTaskCompleted.isChecked
+                            Log.i("taskCompleted", "${task.task_completed}, ${task.task_name}")
                             taskViewModel.addTask(task)
-                            mainList.removeLast()
                         }
                     }
-                    
+
                 }
                 if (this is NoteViewHolder) {
                     val note = differ.currentList[position] as Note
                     NoteViewHolder(noteItemView).bindNote(note)
-    
+
                     itemView.apply {
                         noteItemView.tvNoteName.setOnClickListener {
                             OpenOnClick(this@MainFragment, note).onClickOpen()
                         }
-                        
+
                         noteItemView.tvNoteName.setOnLongClickListener {
-                           true
+                            true
                         }
-                        
+
                         ibNoteColour.setOnClickListener {
                             PopupMenu(context, it).apply {
                                 inflate(R.menu.colours_menu)
                                 setOnMenuItemClickListener {
-                                    when(it.itemId){
+                                    when (it.itemId) {
                                         R.id.blueColour -> {
                                             ibNoteColour.setImageResource(R.drawable.bluecircle)
                                             note.noteColour = R.string.bluecolour
                                             noteViewModel.addNote(note)
+                                            mainList.toSet().toList()
                                         }
                                         R.id.purpleColour -> {
                                             ibNoteColour.setImageResource(R.drawable.purplecircle)
                                             note.noteColour = R.string.purplecolour
                                             noteViewModel.addNote(note)
+                                            mainList.toSet().toList()
                                         }
                                         R.id.yellowColour -> {
                                             ibNoteColour.setImageResource(R.drawable.yellowcircle)
                                             note.noteColour = R.string.yellowcolour
                                             noteViewModel.addNote(note)
+                                            mainList.toSet().toList()
                                         }
                                         R.id.redColour -> {
                                             ibNoteColour.setImageResource(R.drawable.redcircle)
                                             note.noteColour = R.string.redcolour
                                             noteViewModel.addNote(note)
+                                            mainList.toSet().toList()
                                         }
                                         R.id.greenColour -> {
                                             ibNoteColour.setImageResource(R.drawable.greencircle)
                                             note.noteColour = R.string.greencolour
                                             noteViewModel.addNote(note)
+                                            mainList.toSet().toList()
                                         }
                                     }
                                     true
@@ -212,38 +247,38 @@ class MainFragment: Fragment() {
                 }
             }
         }
-        
+
         override fun getItemCount() = differ.currentList.size
-        
-        inner class TaskViewHolder(binding: TaskItemBinding):
-            RecyclerView.ViewHolder(binding.root){
-                fun bindTask(task: Task){
-                    taskItemView.apply {
-                        tvTaskName.text = task.task_name
-                        tvTaskDescription.text = task.task_description
-                        tvTaskTime.text = task.task_time
-                        cbTaskCompleted.isChecked = task.task_completed
-                    }
-                    
+
+        inner class TaskViewHolder(binding: TaskItemBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            fun bindTask(task: Task) {
+                taskItemView.apply {
+                    tvTaskName.text = task.task_name
+                    tvTaskDescription.text = task.task_description
+                    tvTaskTime.text = task.task_time
+                    cbTaskCompleted.isChecked = task.task_completed
                 }
+
             }
-        
-        inner class NoteViewHolder(binding: NoteItemBinding):
-            RecyclerView.ViewHolder(binding.root){
-                fun bindNote(note: Note){
-                    noteItemView.apply {
-                        tvNoteName.text = note.title
-                        tvNoteTime.text = note.time
-                        when(note.noteColour){
-                            R.string.bluecolour -> ibNoteColour.setImageResource(R.drawable.bluecircle)
-                            R.string.purplecolour -> ibNoteColour.setImageResource(R.drawable.purplecircle)
-                            R.string.greencolour -> ibNoteColour.setImageResource(R.drawable.greencircle)
-                            R.string.yellowcolour -> ibNoteColour.setImageResource(R.drawable.yellowcircle)
-                            R.string.redcolour -> ibNoteColour.setImageResource(R.drawable.redcircle)
-                        }
+        }
+
+        inner class NoteViewHolder(binding: NoteItemBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            fun bindNote(note: Note) {
+                noteItemView.apply {
+                    tvNoteName.text = note.title
+                    tvNoteTime.text = note.time
+                    when (note.noteColour) {
+                        R.string.bluecolour -> ibNoteColour.setImageResource(R.drawable.bluecircle)
+                        R.string.purplecolour -> ibNoteColour.setImageResource(R.drawable.purplecircle)
+                        R.string.greencolour -> ibNoteColour.setImageResource(R.drawable.greencircle)
+                        R.string.yellowcolour -> ibNoteColour.setImageResource(R.drawable.yellowcircle)
+                        R.string.redcolour -> ibNoteColour.setImageResource(R.drawable.redcircle)
                     }
                 }
             }
         }
-    
+    }
 }
+

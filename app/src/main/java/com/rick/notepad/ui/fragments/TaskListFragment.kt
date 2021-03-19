@@ -2,7 +2,6 @@ package com.rick.notepad.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,6 @@ class TaskListFragment: Fragment() {
     private val binding get() = _binding!!
     private lateinit var taskItemBinding: TaskItemBinding
     private lateinit var taskViewModel: TaskViewModel
-    private lateinit var task: Task
     private val taskAdapter = TaskAdapter()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -90,7 +88,7 @@ class TaskListFragment: Fragment() {
         }
     
         override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-            task = differ.currentList.get(position)
+            val task = differ.currentList[position]
             with(holder){
                 with(taskItemBinding){
                     this.tvTaskName.text = task.task_name
@@ -99,21 +97,36 @@ class TaskListFragment: Fragment() {
                     this.tvTaskTime.text = task.task_time
                 }
                 
-                itemView.apply {
+                this.itemView.apply {
                     taskItemBinding.tvTaskName.setOnClickListener {
                         OpenOnClick(this@TaskListFragment, task).onClickOpen()
                     }
     
                     taskItemBinding.tvTaskName.setOnLongClickListener {
-                        MyPopUpMenu(context, task, it, taskViewModel, this@TaskListFragment)
+                        MyPopUpMenu(context, task, it, taskViewModel, this@TaskListFragment).myPopUpMenu()
                         true
                     }
                     
-                    cbTaskCompleted.setOnClickListener {
-                        task = differ.currentList.get(position) as Task
+                    taskItemBinding.cbTaskCompleted.setOnClickListener {
+//                        task = differ.currentList.get(position) as Task
+                        /*
+                        * in this i use both viewBinding and synthetic because at first i thought
+                        * i had a viewBinding bug, as the value of the current task would always
+                        * default to the last value in the  list, but later on i found out that
+                        * i was using task as a lateinit, thus it would always hold the last
+                        * assigned value.
+                        *
+                        * glad to know it, experience acquired, but am not gonna change everything back
+                        * to view model, actually there's....
+                        * */
                         task.task_completed = cbTaskCompleted.isChecked
                         taskViewModel.addTask(task)
-                        Log.e("task", "${task.task_completed}")
+                    }
+                    if (taskItemBinding.tvTaskTime.text.isNotBlank()) {
+                        taskItemBinding.tvTaskTime.visibility = View.VISIBLE
+                        taskItemBinding.tvTaskTime.text = task.task_time
+                    } else{
+                        taskItemBinding.tvTaskTime.visibility = View.GONE
                     }
                 }
                 
